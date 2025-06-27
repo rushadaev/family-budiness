@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Bidness - Premium Streetwear</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000000;
+            color: #F5E6D3;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 20px 40px;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #D4AF37;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #D4AF37;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.7;
+        }
+
+        .cart-icon {
+            color: #D4AF37;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 80vh;
+            width: 100%;
+            margin-top: 70px;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .shop-now-btn {
+            padding: 15px 40px;
+            background-color: transparent;
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .shop-now-btn:hover {
+            background-color: #D4AF37;
+            color: #000;
+        }
+
+        /* Products Section */
+        .products {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #D4AF37;
+            margin-bottom: 60px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: #1A1A1A;
+            padding: 20px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: #2A2A2A;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-name {
+            font-size: 18px;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            color: #F5E6D3;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            border: 1px solid #D4AF37;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .add-to-cart {
+            opacity: 1;
+        }
+
+        .add-to-cart:hover {
+            background-color: #D4AF37;
+            color: #000;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #D4AF37;
+            padding: 40px;
+            text-align: center;
+            color: #D4AF37;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-section {
+            flex: 1;
+        }
+
+        .footer-section h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                padding: 15px 20px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">Family Bidness</div>
+            <ul class="nav-links">
+                <li><a href="#shop">Shop</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="cart-icon">🛒</div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <video autoplay muted loop playsinline>
+            <source src="eaglee_web.webm" type="video/webm">
+            <source src="eaglee_web.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay">
+            <button class="shop-now-btn">Shop Now</button>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="shop">
+        <h2 class="section-title">Collection</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="eaglee_logo_512.png" alt="Product 1">
+                </div>
+                <h3 class="product-name">Eagle Hoodie</h3>
+                <p class="product-price">$120</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="eaglee_logo_512.png" alt="Product 2">
+                </div>
+                <h3 class="product-name">Classic Tee</h3>
+                <p class="product-price">$65</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="eaglee_logo_512.png" alt="Product 3">
+                </div>
+                <h3 class="product-name">Premium Cap</h3>
+                <p class="product-price">$45</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="eaglee_logo_512.png" alt="Product 4">
+                </div>
+                <h3 class="product-name">Street Jacket</h3>
+                <p class="product-price">$180</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="eaglee_logo_512.png" alt="Product 5">
+                </div>
+                <h3 class="product-name">Gold Chain</h3>
+                <p class="product-price">$250</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="eaglee_logo_512.png" alt="Product 6">
+                </div>
+                <h3 class="product-name">Luxury Bag</h3>
+                <p class="product-price">$320</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe for exclusive drops</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <p>Instagram | Twitter | TikTok</p>
+            </div>
+            <div class="footer-section">
+                <h3>© 2024 Family Bidness</h3>
+                <p>All rights reserved</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
