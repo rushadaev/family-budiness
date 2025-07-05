@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .playlist {
+            list-style: none;
+            padding: 0;
+        }
+        .playlist li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        .playlist li:hover {
+            background-color: #f0f0f0;
+        }
+        .playlist li.active {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        .now-playing {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Music Player</h1>
+    <div class="now-playing">Now Playing: <span id="current-track">-</span></div>
+    <div class="controls">
+        <button id="play-btn">Play</button>
+        <button id="pause-btn">Pause</button>
+        <button id="stop-btn">Stop</button>
+        <button id="prev-btn">Previous</button>
+        <button id="next-btn">Next</button>
+    </div>
+    <ul class="playlist" id="playlist"></ul>
+
+    <script src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js"></script>
+    <script>
+        const playlist = [
+            {title: "Solid Dudes", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/2_solid_dudes.mp3"},
+            {title: "Gordon Gekko", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/3_gordon_gekko.mp3"},
+            {title: "FB Airlines", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/4_fb_airlines.mp3"},
+            {title: "BBL", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/5_bbl.mp3"},
+            {title: "Muscle Up", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/6_muscle_up.mp3"},
+            {title: "No Limit Records", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/7_no_limit_records.mp3"},
+            {title: "Pantheon Flow", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/8_pantheon_flow.mp3"},
+            {title: "Caravaggio", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/9_caravaggio.mp3"},
+            {title: "How Much?", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/10_how_much.mp3"},
+            {title: "Dame Dash Flow", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/11_dame_dash_flow.mp3"},
+            {title: "Bigger Picture", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/12_bigger_picture.mp3"},
+            {title: "Bonus Track #1", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/13_bonus_track_1.mp3"},
+            {title: "Bonus Track #2", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/14_bonus_track_2.mp3"}
+        ];
+
+        let currentTrack = 0;
+        let sound = null;
+
+        // Initialize player
+        function loadTrack(index) {
+            if (sound) {
+                sound.unload();
+            }
+            
+            sound = new Howl({
+                src: [playlist[index].src],
+                html5: true,
+                onend: function() {
+                    playNext();
+                }
+            });
+            
+            document.getElementById('current-track').textContent = playlist[index].title;
+            updatePlaylistUI();
+        }
+
+        // Update playlist UI
+        function updatePlaylistUI() {
+            const playlistItems = document.querySelectorAll('.playlist li');
+            playlistItems.forEach((item, index) => {
+                item.classList.toggle('active', index === currentTrack);
+            });
+        }
+
+        // Control functions
+        function play() {
+            if (!sound) {
+                loadTrack(currentTrack);
+            }
+            sound.play();
+        }
+
+        function pause() {
+            if (sound) {
+                sound.pause();
+            }
+        }
+
+        function stop() {
+            if (sound) {
+                sound.stop();
+            }
+        }
+
+        function playNext() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            loadTrack(currentTrack);
+            play();
+        }
+
+        function playPrev() {
+            currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+            loadTrack(currentTrack);
+            play();
+        }
+
+        // Event listeners
+        document.getElementById('play-btn').addEventListener('click', play);
+        document.getElementById('pause-btn').addEventListener('click', pause);
+        document.getElementById('stop-btn').addEventListener('click', stop);
+        document.getElementById('next-btn').addEventListener('click', playNext);
+        document.getElementById('prev-btn').addEventListener('click', playPrev);
+
+        // Create playlist UI
+        const playlistEl = document.getElementById('playlist');
+        playlist.forEach((track, index) => {
+            const li = document.createElement('li');
+            li.textContent = track.title;
+            li.addEventListener('click', () => {
+                currentTrack = index;
+                loadTrack(currentTrack);
+                play();
+            });
+            playlistEl.appendChild(li);
+        });
+
+        // Load first track
+        loadTrack(0);
+    </script>
+</body>
+</html>
