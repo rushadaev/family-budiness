@@ -1,0 +1,489 @@
+<!-- Music Player Widget - Copy everything below this line -->
+<div id="music-player-widget" style="position: fixed; bottom: 0; left: 0; right: 0; background: #000; color: #fff; padding: 15px 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; transition: transform 0.3s ease;">
+    <style>
+        #music-player-widget * {
+            box-sizing: border-box;
+        }
+        #music-player-widget.hidden {
+            transform: translateY(100%);
+        }
+        #music-player-widget .player-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        #music-player-widget .track-info {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+        #music-player-widget .track-title {
+            font-size: 16px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #music-player-widget .track-artist {
+            font-size: 14px;
+            color: #888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #music-player-widget .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #music-player-widget .control-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #music-player-widget .control-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        #music-player-widget .play-pause-btn {
+            background: #fff;
+            color: #000;
+            width: 40px;
+            height: 40px;
+        }
+        #music-player-widget .play-pause-btn:hover {
+            background: #ddd;
+        }
+        #music-player-widget .progress-container {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #music-player-widget .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        #music-player-widget .progress-fill {
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        #music-player-widget .time {
+            font-size: 12px;
+            color: #888;
+            min-width: 40px;
+        }
+        #music-player-widget .icon-btn {
+            background: none;
+            border: none;
+            color: #888;
+            padding: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #music-player-widget .icon-btn:hover {
+            color: #fff;
+        }
+        #music-player-widget .playlist-panel {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            max-height: 50vh;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+            margin-bottom: -1px;
+        }
+        #music-player-widget .playlist-panel.show {
+            display: block;
+        }
+        #music-player-widget.playlist-open {
+            transform: translateY(0) !important;
+        }
+        #music-player-widget .playlist-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        #music-player-widget .playlist-item:hover {
+            background: #2a2a2a;
+        }
+        #music-player-widget .playlist-item.active {
+            background: #333;
+            color: #fff;
+        }
+        #music-player-widget .playlist-item-number {
+            color: #666;
+            min-width: 30px;
+        }
+        #music-player-widget .playlist-item.active .playlist-item-number {
+            color: #fff;
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            #music-player-widget {
+                padding: 10px 15px;
+            }
+            #music-player-widget .player-container {
+                gap: 10px;
+                justify-content: center;
+            }
+            #music-player-widget .track-info {
+                min-width: 0;
+                flex: 0 0 auto;
+                max-width: 120px;
+            }
+            #music-player-widget .track-title {
+                font-size: 13px;
+            }
+            #music-player-widget .track-artist {
+                font-size: 11px;
+            }
+            #music-player-widget .controls {
+                gap: 5px;
+                flex-shrink: 0;
+            }
+            #music-player-widget .control-btn {
+                padding: 5px;
+            }
+            #music-player-widget .play-pause-btn {
+                width: 36px;
+                height: 36px;
+            }
+            #music-player-widget .progress-container {
+                display: none;
+            }
+            #music-player-widget .time {
+                display: none;
+            }
+            #music-player-widget .icon-btn {
+                flex-shrink: 0;
+            }
+            #music-player-widget .icon-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #music-player-widget .track-info {
+                max-width: 100px;
+            }
+        }
+    </style>
+    
+    <div class="player-container">
+        <div class="track-info">
+            <div class="track-title" id="track-title">Loading...</div>
+            <div class="track-artist">Family Business</div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="prev-btn" title="Previous">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                </svg>
+            </button>
+            <button class="control-btn play-pause-btn" id="play-pause-btn" title="Play">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="play-icon">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" id="pause-icon" style="display: none;">
+                    <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
+                </svg>
+            </button>
+            <button class="control-btn" id="next-btn" title="Next">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 18h2V6h-2zM6 18l8.5-6L6 6z"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="progress-container">
+            <span class="time" id="current-time">0:00</span>
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <span class="time" id="total-time">0:00</span>
+        </div>
+        
+        <button class="icon-btn" id="playlist-toggle" title="Playlist">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/>
+            </svg>
+        </button>
+        
+        <button class="icon-btn" id="hide-player" title="Hide Player">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+    </div>
+    
+    <div class="playlist-panel" id="playlist-panel"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.min.js"></script>
+<script>
+(function() {
+    const playlist = [
+        {title: "Solid Dudes", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/2_solid_dudes.mp3"},
+        {title: "Gordon Gekko", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/3_gordon_gekko.mp3"},
+        {title: "FB Airlines", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/4_fb_airlines.mp3"},
+        {title: "BBL", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/5_bbl.mp3"},
+        {title: "Muscle Up", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/6_muscle_up.mp3"},
+        {title: "No Limit Records", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/7_no_limit_records.mp3"},
+        {title: "Pantheon Flow", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/8_pantheon_flow.mp3"},
+        {title: "Caravaggio", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/9_caravaggio.mp3"},
+        {title: "How Much?", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/10_how_much.mp3"},
+        {title: "Dame Dash Flow", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/11_dame_dash_flow.mp3"},
+        {title: "Bigger Picture", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/12_bigger_picture.mp3"},
+        {title: "Bonus Track #1", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/13_bonus_track_1.mp3"},
+        {title: "Bonus Track #2", src: "https://raw.githubusercontent.com/rushadaev/family-budiness/main/music_lib/14_bonus_track_2.mp3"}
+    ];
+
+    let currentTrack = 0;
+    let sound = null;
+    let isPlaying = false;
+
+    // DOM elements
+    const playerWidget = document.getElementById('music-player-widget');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const trackTitle = document.getElementById('track-title');
+    const currentTimeEl = document.getElementById('current-time');
+    const totalTimeEl = document.getElementById('total-time');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFill = document.getElementById('progress-fill');
+    const playlistToggle = document.getElementById('playlist-toggle');
+    const playlistPanel = document.getElementById('playlist-panel');
+    const hidePlayerBtn = document.getElementById('hide-player');
+
+    // Format time
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Update progress
+    function updateProgress() {
+        if (sound && sound.playing()) {
+            const seek = sound.seek();
+            const duration = sound.duration();
+            const progress = (seek / duration) * 100;
+            
+            progressFill.style.width = progress + '%';
+            currentTimeEl.textContent = formatTime(seek);
+            
+            requestAnimationFrame(updateProgress);
+        }
+    }
+
+    // Load track
+    function loadTrack(index) {
+        if (sound) {
+            sound.unload();
+        }
+        
+        trackTitle.textContent = 'Loading...';
+        
+        sound = new Howl({
+            src: [playlist[index].src],
+            html5: true,
+            xhr: {
+                method: 'GET',
+                headers: {},
+                withCredentials: false
+            },
+            onload: function() {
+                trackTitle.textContent = playlist[index].title;
+                totalTimeEl.textContent = formatTime(sound.duration());
+                updatePlaylistUI();
+            },
+            onloaderror: function(id, err) {
+                console.error('Failed to load track:', err);
+                trackTitle.textContent = 'Error: Cannot load track';
+                isPlaying = false;
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            },
+            onend: function() {
+                playNext();
+            },
+            onplay: function() {
+                updateProgress();
+            }
+        });
+    }
+
+    // Update playlist UI
+    function updatePlaylistUI() {
+        const items = playlistPanel.querySelectorAll('.playlist-item');
+        items.forEach((item, index) => {
+            item.classList.toggle('active', index === currentTrack);
+        });
+    }
+
+    // Play/Pause
+    function togglePlayPause() {
+        if (!sound) {
+            loadTrack(currentTrack);
+            // Wait for track to load before playing
+            const checkLoaded = setInterval(() => {
+                if (sound && sound.state() === 'loaded') {
+                    clearInterval(checkLoaded);
+                    sound.play();
+                    isPlaying = true;
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                }
+            }, 100);
+            return;
+        }
+        
+        if (isPlaying) {
+            sound.pause();
+            isPlaying = false;
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+        } else {
+            sound.play();
+            isPlaying = true;
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+        }
+    }
+
+    // Play next
+    function playNext() {
+        currentTrack = (currentTrack + 1) % playlist.length;
+        loadTrack(currentTrack);
+        if (isPlaying) {
+            sound.play();
+        }
+    }
+
+    // Play previous
+    function playPrev() {
+        currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+        loadTrack(currentTrack);
+        if (isPlaying) {
+            sound.play();
+        }
+    }
+
+    // Seek
+    function seek(e) {
+        if (sound) {
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            sound.seek(sound.duration() * percent);
+        }
+    }
+
+    // Show/Hide player
+    function hidePlayer() {
+        playerWidget.classList.add('hidden');
+    }
+
+    function showPlayer() {
+        playerWidget.classList.remove('hidden');
+    }
+
+    // Create playlist
+    function createPlaylist() {
+        playlistPanel.innerHTML = '';
+        playlist.forEach((track, index) => {
+            const item = document.createElement('div');
+            item.className = 'playlist-item';
+            item.innerHTML = `
+                <span class="playlist-item-number">${index + 1}</span>
+                <span>${track.title}</span>
+            `;
+            item.addEventListener('click', () => {
+                currentTrack = index;
+                loadTrack(currentTrack);
+                isPlaying = true;
+                sound.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                playlistPanel.classList.remove('show');
+                playerWidget.classList.remove('playlist-open');
+            });
+            playlistPanel.appendChild(item);
+        });
+    }
+
+    // Event listeners
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    prevBtn.addEventListener('click', playPrev);
+    nextBtn.addEventListener('click', playNext);
+    if (progressBar) {
+        progressBar.addEventListener('click', seek);
+    }
+    playlistToggle.addEventListener('click', () => {
+        playlistPanel.classList.toggle('show');
+        playerWidget.classList.toggle('playlist-open');
+    });
+    hidePlayerBtn.addEventListener('click', () => {
+        playlistPanel.classList.remove('show');
+        playerWidget.classList.remove('playlist-open');
+        hidePlayer();
+    });
+
+    // Global event listener for .open-music elements
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.open-music')) {
+            e.preventDefault();
+            showPlayer();
+            if (!isPlaying) {
+                togglePlayPause();
+            }
+        }
+    });
+
+    // Close playlist when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#music-player-widget') && !e.target.closest('.open-music')) {
+            playlistPanel.classList.remove('show');
+        }
+    });
+
+    // Initialize
+    createPlaylist();
+    trackTitle.textContent = playlist[0].title;
+    currentTrack = 0;
+    updatePlaylistUI();
+})();
+</script>
+<!-- End of Music Player Widget -->
